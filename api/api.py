@@ -16,9 +16,8 @@ def dict_factory(cursor, row):
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
     return d
-
-@app.route('/api/Tischreservierung/tische/all', methods=['GET'])
-def api_all():
+    
+def connect_db():
     conn = sqlite3.connect('buchungssystem.sqlite')
 
     conn.row_factory = dict_factory
@@ -27,9 +26,35 @@ def api_all():
     with current_app.open_resource('create_buchungssystem.sql') as f:
         conn.executescript(f.read().decode('utf8'))
 
+    return cur
+
+
+@app.route('/api/Tischreservierung/tische/all', methods=['GET'])
+def api_all_tische():
+    cur=connect_db()
     alle_tische = cur.execute('SELECT * FROM tische;').fetchall()
 
     return jsonify(alle_tische)
+
+
+@app.route('/api/Tischreservierung/reservierungen/all', methods=['GET'])
+def api_all_reservierungen():
+    cur=connect_db()
+
+    alle_tische = cur.execute('SELECT * FROM reservierungen;').fetchall()
+
+    return jsonify(alle_tische)
+
+
+
+@app.route('/api/Tischreservierung/freie_tische', methods=['GET'])
+def api_freie_tische():
+    cur=connect_db()
+
+    alle_tische = cur.execute('SELECT * FROM reservierungen;').fetchall()
+
+    return jsonify(alle_tische)
+
 
 
 
